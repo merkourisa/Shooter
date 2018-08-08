@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Shooter</title>
+<meta charset="utf-8">
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+}
+</style>
+<script src="menu/Menu.js"></script>
+<script src="level0/Level0.js"></script>
+<script src="level1/Level1.js"></script>
+<script src="level2/Level2.js"></script>
+<script src="//cdn.jsdelivr.net/phaser/2.6.2/phaser.min.js"
+	type="text/javascript"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-demo', {
+			preload : preload,
+			create : create,
+			update : update,
+			render : render
+		});
+
+		var player;
+		var starfield;
+		var cursors;
+		var bank;
+		var shipTrail;
+		var bullets;
+		var fireButton;
+		var bulletTimer = 0;
+
+		var ACCLERATION = 600;
+		var DRAG = 400;
+		var MAXSPEED = 400;
+
+		function preload() {
+
+			//  We need this because the assets are on github pages
+			//  Remove the next 2 lines if running locally
+			//game.load.baseURL = 'https://merkourisa.github.io/Shooter/';
+			//game.load.crossOrigin = 'anonymous';
+
+			game.state.add('Menu', Menu); //			   NAME						AM				GITHUB NAME
+			game.state.add('Level0', Level0); // assigned to MERKOURIS ALEXANDROS		2015000 		merkourisa
+			game.state.add('Level1', Level1); // assigned to MERKOURIS ALEXANDROS		2015000 		merkourisa
+			game.state.add('Level2', Level2); //	FREE
+			game.state.start('Menu');
+
+		}
+
+		function create() {
+
+		}
+
+		function update() {
+
+		}
+
+		function render() {
+
+		}
+
+		function fireBullet() {
+			//  To avoid them being allowed to fire too fast we set a time limit
+			if (game.time.now > bulletTimer) {
+				var BULLET_SPEED = 400;
+				var BULLET_SPACING = 250;
+				//  Grab the first bullet we can from the pool
+				var bullet = bullets.getFirstExists(false);
+
+				if (bullet) {
+					//  And fire it
+					//  Make bullet come out of tip of ship with right angle
+					var bulletOffset = 20 * Math.sin(game.math
+							.degToRad(player.angle));
+					bullet.reset(player.x + bulletOffset, player.y);
+					bullet.angle = player.angle;
+					game.physics.arcade.velocityFromAngle(bullet.angle,
+							BULLET_SPEED, bullet.body.velocity);
+					bullet.body.velocity.y += player.body.velocity.y;
+
+					bulletTimer = game.time.now + BULLET_SPACING;
+				}
+			}
+		}
+	</script>
+</body>
+</html>
